@@ -60,19 +60,19 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // method to compare passwords
 userSchema.methods.isPasswordCorrect = async function (plainPassword) {
-  return await bcrypt.compare(password, this.password);
+  return await bcrypt.compare(plainPassword, this.password);
 };
 
 // generate the access token
 userSchema.methods.generateAccessToken = async function () {
   // short lived access token
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       email: this.email,
@@ -86,7 +86,7 @@ userSchema.methods.generateAccessToken = async function () {
 
 // generate the refresh token
 userSchema.methods.generateRefreshToken = async function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
     },
